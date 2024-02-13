@@ -5,8 +5,20 @@ from fpdf import FPDF
 from pathlib import Path
 
 
-def generate(invoices_path, pdfs_path, image_path, product_id,
-             product_name, amount_purchased, price, total_price):
+def generate(invoices_path, pdfs_path, image_path, product_id, product_name,
+             amount_purchased, price_per_unit, total_price):
+    """
+    This function invoice Excel files into a readable pdf format.
+    :param invoices_path:
+    :param pdfs_path:
+    :param image_path:
+    :param product_id:
+    :param product_name:
+    :param amount_purchased:
+    :param price_per_unit:
+    :param total_price:
+    :return:
+    """
     filepaths = glob.glob(f"{invoices_path}/*.xlsx")
 
     for filepath in filepaths:
@@ -43,7 +55,7 @@ def generate(invoices_path, pdfs_path, image_path, product_id,
             pdf.cell(w=30, h=8, txt=str(row[product_id]), border=1)
             pdf.cell(w=70, h=8, txt=str(row[product_name]), border=1)
             pdf.cell(w=30, h=8, txt=str(row[amount_purchased]), border=1)
-            pdf.cell(w=30, h=8, txt=str(row[price]), border=1)
+            pdf.cell(w=30, h=8, txt=str(row[price_per_unit]), border=1)
             pdf.cell(w=30, h=8, txt=str(row[total_price]), border=1, ln=1)
 
         total_sum = df[total_price].sum()
@@ -64,5 +76,6 @@ def generate(invoices_path, pdfs_path, image_path, product_id,
         pdf.cell(w=25, h=8, txt=image_path)
         pdf.image(image_path, w=10)
 
-        os.makedirs(pdfs_path)
+        if not os.path.exists(pdfs_path):
+            os.makedirs(pdfs_path)
         pdf.output(f"{pdfs_path}/{filename}.pdf")
